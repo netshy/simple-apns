@@ -242,7 +242,9 @@ def test_send_notification_max_retries_exceeded(
 
                 # Check a substring of the error message
                 error_message = str(excinfo.value)
-                assert "Failed to send notification after maximum retries" in error_message
+                assert (
+                    "Failed to send notification after maximum retries" in error_message
+                )
 
                 # Check call counts
                 assert (
