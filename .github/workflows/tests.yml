@@ -30,7 +30,7 @@ jobs:
         # Install the package in development mode with all dependencies
         pip install -e .[dev]
         # Install additional testing tools if needed
-        pip install pytest pytest-cov
+        pip install pytest pytest-cov django
 
     - name: Run tests
       run: |

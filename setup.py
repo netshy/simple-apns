@@ -1,4 +1,5 @@
 import os
+
 from setuptools import setup, find_packages
 
 # Read the contents of README.md
@@ -40,19 +41,17 @@ setup(
             "isort>=5.9.1",
             "flake8>=3.9.2",
             "mypy>=0.901",
+            "django>=2.2",
         ],
     },
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Communications",
     ],
