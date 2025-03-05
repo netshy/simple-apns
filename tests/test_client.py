@@ -49,7 +49,7 @@ def test_client_init_with_custom_params(apns_test_params):
 def test_get_auth_token(mock_client):
     """Test getting an authentication token."""
     with patch(
-            "simple_apns.client.create_token", return_value="mock_token"
+        "simple_apns.client.create_token", return_value="mock_token"
     ) as mock_create_token:
         # First call should create a new token
         token = mock_client._get_auth_token()
@@ -73,7 +73,7 @@ def test_get_headers(mock_client):
     """Test generating request headers."""
     with patch.object(mock_client, "_get_auth_token", return_value="test_token"):
         # Test default headers
-        headers = mock_client._get_headers("device_token")
+        headers = mock_client._get_headers()
 
         assert headers["authorization"] == "bearer test_token"
         assert headers["apns-topic"] == "com.example.app"
@@ -83,16 +83,14 @@ def test_get_headers(mock_client):
         assert "apns-expiration" not in headers
 
         # Test with expiration and custom priority
-        headers = mock_client._get_headers(
-            "device_token", expiration=1600000000, priority=5
-        )
+        headers = mock_client._get_headers(expiration=1600000000, priority=5)
 
         assert headers["apns-expiration"] == "1600000000"
         assert headers["apns-priority"] == "5"
 
 
 def test_send_notification_success(
-        mock_client, sample_payload, sample_device_token, mock_response_success
+    mock_client, sample_payload, sample_device_token, mock_response_success
 ):
     """Test sending a notification successfully."""
     test_headers = {
@@ -105,7 +103,7 @@ def test_send_notification_success(
 
     with patch.object(mock_client, "_get_headers", return_value=test_headers):
         with patch.object(
-                mock_client.client, "post", return_value=mock_response_success
+            mock_client.client, "post", return_value=mock_response_success
         ) as mock_post:
             # Call the method
             success = mock_client.send_notification(
@@ -119,7 +117,8 @@ def test_send_notification_success(
             mock_post.assert_called_once()
             call_args = mock_post.call_args
             assert (
-                    call_args[0][0] == f"{mock_client.endpoint}/3/device/{sample_device_token}"
+                call_args[0][0]
+                == f"{mock_client.endpoint}/3/device/{sample_device_token}"
             )
             assert call_args[1]["json"] == sample_payload.to_dict()
             assert call_args[1]["headers"] == test_headers
@@ -127,7 +126,7 @@ def test_send_notification_success(
 
 
 def test_send_notification_with_dict_payload(
-        mock_client, sample_device_token, mock_response_success
+    mock_client, sample_device_token, mock_response_success
 ):
     """Test sending a notification with a dictionary payload."""
     # Create a headers dict with required keys
@@ -141,7 +140,7 @@ def test_send_notification_with_dict_payload(
 
     with patch.object(mock_client, "_get_headers", return_value=test_headers):
         with patch.object(
-                mock_client.client, "post", return_value=mock_response_success
+            mock_client.client, "post", return_value=mock_response_success
         ) as mock_post:
             # Create a dictionary payload
             dict_payload = {
@@ -160,7 +159,8 @@ def test_send_notification_with_dict_payload(
             mock_post.assert_called_once()
             call_args = mock_post.call_args
             assert (
-                    call_args[0][0] == f"{mock_client.endpoint}/3/device/{sample_device_token}"
+                call_args[0][0]
+                == f"{mock_client.endpoint}/3/device/{sample_device_token}"
             )
             assert call_args[1]["json"] == dict_payload
             assert call_args[1]["headers"] == test_headers
@@ -168,12 +168,12 @@ def test_send_notification_with_dict_payload(
 
 
 def test_send_notification_bad_token(
-        mock_client, sample_payload, sample_device_token, mock_response_error
+    mock_client, sample_payload, sample_device_token, mock_response_error
 ):
     """Test sending a notification with a bad device token."""
     with patch.object(mock_client, "_get_headers", return_value={"some": "headers"}):
         with patch.object(
-                mock_client.client, "post", return_value=mock_response_error
+            mock_client.client, "post", return_value=mock_response_error
         ) as mock_post:
             with pytest.raises(APNSTokenError) as excinfo:
                 mock_client.send_notification(
@@ -185,7 +185,7 @@ def test_send_notification_bad_token(
 
 
 def test_send_notification_server_error_with_retry(
-        mock_client, sample_payload, sample_device_token
+    mock_client, sample_payload, sample_device_token
 ):
     """Test sending a notification with a server error that triggers retries."""
     with patch.object(mock_client, "_get_headers", return_value={"some": "headers"}):
@@ -200,7 +200,7 @@ def test_send_notification_server_error_with_retry(
 
         # Mock post to return server error and then success
         with patch.object(
-                mock_client.client, "post", side_effect=[server_error, success_response]
+            mock_client.client, "post", side_effect=[server_error, success_response]
         ) as mock_post:
             with patch("time.sleep") as mock_sleep:  # Mock sleep to speed up test
                 success = mock_client.send_notification(
@@ -213,7 +213,7 @@ def test_send_notification_server_error_with_retry(
 
 
 def test_send_notification_max_retries_exceeded(
-        mock_client, sample_payload, sample_device_token
+    mock_client, sample_payload, sample_device_token
 ):
     """Test sending a notification where max retries are exceeded."""
     test_headers = {
@@ -232,7 +232,7 @@ def test_send_notification_max_retries_exceeded(
 
         # Mock post to always return server error
         with patch.object(
-                mock_client.client, "post", return_value=server_error
+            mock_client.client, "post", return_value=server_error
         ) as mock_post:
             with patch("time.sleep") as mock_sleep:  # Mock sleep to speed up test
                 with pytest.raises(APNSServerError) as excinfo:
@@ -247,21 +247,21 @@ def test_send_notification_max_retries_exceeded(
 
                 # Check call counts
                 assert (
-                        mock_post.call_count == 1 + mock_client.max_retries
+                    mock_post.call_count == 1 + mock_client.max_retries
                 )  # Initial + retries
                 assert (
-                        mock_sleep.call_count == mock_client.max_retries
+                    mock_sleep.call_count == mock_client.max_retries
                 )  # Sleep between retries
 
 
 def test_send_notification_network_error(
-        mock_client, sample_payload, sample_device_token
+    mock_client, sample_payload, sample_device_token
 ):
     """Test sending a notification with a network error."""
     with patch.object(mock_client, "_get_headers", return_value={"some": "headers"}):
         # Mock post to raise a network error
         with patch.object(
-                mock_client.client, "post", side_effect=httpx.RequestError("Network error")
+            mock_client.client, "post", side_effect=httpx.RequestError("Network error")
         ) as mock_post:
             with patch("time.sleep") as mock_sleep:  # Mock sleep to speed up test
                 with pytest.raises(APNSException) as excinfo:
@@ -275,14 +275,14 @@ def test_send_notification_network_error(
 
 
 def test_send_notification_with_custom_options(
-        mock_client, sample_payload, sample_device_token, mock_response_success
+    mock_client, sample_payload, sample_device_token, mock_response_success
 ):
     """Test sending a notification with custom options."""
     with patch.object(mock_client, "_get_headers") as mock_get_headers:
         mock_get_headers.return_value = {"some": "headers"}
 
         with patch.object(
-                mock_client.client, "post", return_value=mock_response_success
+            mock_client.client, "post", return_value=mock_response_success
         ) as mock_post:
             success = mock_client.send_notification(
                 device_token=sample_device_token,
@@ -316,7 +316,7 @@ def test_send_bulk_notifications(mock_client, sample_payload):
         return True
 
     with patch.object(
-            mock_client, "send_notification", side_effect=mock_send
+        mock_client, "send_notification", side_effect=mock_send
     ) as mock_send_notification:
         results = mock_client.send_bulk_notifications(
             device_tokens=device_tokens, payload=sample_payload
@@ -363,7 +363,7 @@ def test_send_bulk_notifications_with_options(mock_client, sample_payload):
     device_tokens = ["token1", "token2"]
 
     with patch.object(
-            mock_client, "send_notification", return_value=True
+        mock_client, "send_notification", return_value=True
     ) as mock_send_notification:
         results = mock_client.send_bulk_notifications(
             device_tokens=device_tokens,

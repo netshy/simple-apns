@@ -207,7 +207,7 @@ def test_send_notification(mock_django_settings):
     mock_client.send_notification.return_value = True
 
     with patch(
-            "simple_apns.django.integration.get_apns_client", return_value=mock_client
+        "simple_apns.django.integration.get_apns_client", return_value=mock_client
     ):
         # Send a notification
         result = send_notification(
@@ -259,7 +259,7 @@ def test_send_bulk_notifications(mock_django_settings):
     mock_client.send_bulk_notifications.return_value = {"token1": True, "token2": False}
 
     with patch(
-            "simple_apns.django.integration.get_apns_client", return_value=mock_client
+        "simple_apns.django.integration.get_apns_client", return_value=mock_client
     ):
         # Send bulk notifications
         device_tokens = ["token1", "token2"]

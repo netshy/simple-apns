@@ -6,11 +6,11 @@ import jwt  # PyJWT library
 
 
 def create_token(
-        team_id: str,
-        auth_key_id: str,
-        auth_key_path: str,
-        auth_key_content: Optional[str] = None,
-        expiration_time: int = 3600,  # 1 hour
+    team_id: str,
+    auth_key_id: str,
+    auth_key_path: str,
+    auth_key_content: Optional[str] = None,
+    expiration_time: int = 3600,  # 1 hour
 ) -> str:
     """
     Create an authentication token for APNS.

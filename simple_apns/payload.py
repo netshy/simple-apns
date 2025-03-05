@@ -10,7 +10,7 @@ class Payload:
     """
 
     def __init__(
-            self, alert_title: Optional[str] = None, alert_body: Optional[str] = None
+        self, alert_title: Optional[str] = None, alert_body: Optional[str] = None
     ):
         """
         Initialize a new payload.
@@ -29,18 +29,18 @@ class Payload:
         self.custom_data = {}
 
     def set_alert(
-            self,
-            title: Optional[str] = None,
-            body: Optional[str] = None,
-            subtitle: Optional[str] = None,
-            launch_image: Optional[str] = None,
-            title_loc_key: Optional[str] = None,
-            title_loc_args: Optional[List[str]] = None,
-            action_loc_key: Optional[str] = None,
-            loc_key: Optional[str] = None,
-            loc_args: Optional[List[str]] = None,
-            summary_arg: Optional[str] = None,
-            summary_arg_count: Optional[int] = None,
+        self,
+        title: Optional[str] = None,
+        body: Optional[str] = None,
+        subtitle: Optional[str] = None,
+        launch_image: Optional[str] = None,
+        title_loc_key: Optional[str] = None,
+        title_loc_args: Optional[List[str]] = None,
+        action_loc_key: Optional[str] = None,
+        loc_key: Optional[str] = None,
+        loc_args: Optional[List[str]] = None,
+        summary_arg: Optional[str] = None,
+        summary_arg_count: Optional[int] = None,
     ) -> "Payload":
         """
         Set the alert properties of the notification.

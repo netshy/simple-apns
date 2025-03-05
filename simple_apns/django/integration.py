@@ -67,15 +67,15 @@ def get_apns_client() -> APNSClient:
 
 
 def _create_payload(
-        title: Optional[str] = None,
-        body: Optional[str] = None,
-        badge: Optional[int] = None,
-        sound: Optional[Union[str, Dict]] = None,
-        category: Optional[str] = None,
-        thread_id: Optional[str] = None,
-        extra_data: Optional[Dict[str, Any]] = None,
-        content_available: bool = False,
-        mutable_content: bool = False,
+    title: Optional[str] = None,
+    body: Optional[str] = None,
+    badge: Optional[int] = None,
+    sound: Optional[Union[str, Dict]] = None,
+    category: Optional[str] = None,
+    thread_id: Optional[str] = None,
+    extra_data: Optional[Dict[str, Any]] = None,
+    content_available: bool = False,
+    mutable_content: bool = False,
 ) -> Payload:
     """
     Create and configure an APNS Payload object.
@@ -126,18 +126,18 @@ def _create_payload(
 
 
 def send_notification(
-        device_token: str,
-        title: Optional[str] = None,
-        body: Optional[str] = None,
-        badge: Optional[int] = None,
-        sound: Optional[Union[str, Dict]] = None,
-        category: Optional[str] = None,
-        thread_id: Optional[str] = None,
-        extra_data: Optional[Dict[str, Any]] = None,
-        content_available: bool = False,
-        mutable_content: bool = False,
-        push_type: str = "alert",
-        priority: int = 10,
+    device_token: str,
+    title: Optional[str] = None,
+    body: Optional[str] = None,
+    badge: Optional[int] = None,
+    sound: Optional[Union[str, Dict]] = None,
+    category: Optional[str] = None,
+    thread_id: Optional[str] = None,
+    extra_data: Optional[Dict[str, Any]] = None,
+    content_available: bool = False,
+    mutable_content: bool = False,
+    push_type: str = "alert",
+    priority: int = 10,
 ) -> bool:
     """
     Send a notification to a device using the Django integration.
@@ -187,18 +187,18 @@ def send_notification(
 
 
 def send_bulk_notifications(
-        device_tokens: List[str],
-        title: Optional[str] = None,
-        body: Optional[str] = None,
-        badge: Optional[int] = None,
-        sound: Optional[Union[str, Dict]] = None,
-        category: Optional[str] = None,
-        thread_id: Optional[str] = None,
-        extra_data: Optional[Dict[str, Any]] = None,
-        content_available: bool = False,
-        mutable_content: bool = False,
-        push_type: str = "alert",
-        priority: int = 10,
+    device_tokens: List[str],
+    title: Optional[str] = None,
+    body: Optional[str] = None,
+    badge: Optional[int] = None,
+    sound: Optional[Union[str, Dict]] = None,
+    category: Optional[str] = None,
+    thread_id: Optional[str] = None,
+    extra_data: Optional[Dict[str, Any]] = None,
+    content_available: bool = False,
+    mutable_content: bool = False,
+    push_type: str = "alert",
+    priority: int = 10,
 ) -> Dict[str, bool]:
     """
     Send a notification to multiple devices using the Django integration.

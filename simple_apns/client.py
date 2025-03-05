@@ -20,15 +20,15 @@ class APNSClient:
     ENDPOINT_DEVELOPMENT = "https://api.development.push.apple.com"
 
     def __init__(
-            self,
-            team_id: str,
-            auth_key_id: str,
-            auth_key_path: str,
-            bundle_id: str,
-            use_sandbox: bool = False,
-            apns_topic: Optional[str] = None,
-            timeout: int = 10,
-            max_retries: int = 3,
+        self,
+        team_id: str,
+        auth_key_id: str,
+        auth_key_path: str,
+        bundle_id: str,
+        use_sandbox: bool = False,
+        apns_topic: Optional[str] = None,
+        timeout: int = 10,
+        max_retries: int = 3,
     ):
         """
         Initialize the APNS client.
@@ -82,13 +82,12 @@ class APNSClient:
         return self._token
 
     def _get_headers(
-            self, device_token: str, expiration: Optional[int] = None, priority: int = 10
+        self, expiration: Optional[int] = None, priority: int = 10
     ) -> Dict:
         """
         Create request headers for APNS.
 
         Args:
-            device_token: The device token
             expiration: Notification expiration time (epoch timestamp)
             priority: The notification priority (10=immediate, 5=conserve power)
 
@@ -109,13 +108,13 @@ class APNSClient:
         return headers
 
     def send_notification(
-            self,
-            device_token: str,
-            payload: Union[Payload, Dict],
-            push_type: str = "alert",
-            priority: int = 10,
-            expiration: Optional[int] = None,
-            collapse_id: Optional[str] = None,
+        self,
+        device_token: str,
+        payload: Union[Payload, Dict],
+        push_type: str = "alert",
+        priority: int = 10,
+        expiration: Optional[int] = None,
+        collapse_id: Optional[str] = None,
     ) -> bool:
         """
         Send a notification to a device.
@@ -146,7 +145,7 @@ class APNSClient:
         url = f"{self.endpoint}/3/device/{device_token}"
 
         # Prepare headers
-        headers = self._get_headers(device_token, expiration, priority)
+        headers = self._get_headers(expiration, priority)
         headers["apns-push-type"] = push_type
 
         if collapse_id:
@@ -207,13 +206,13 @@ class APNSClient:
         raise APNSServerError("Failed to send notification after maximum retries")
 
     def send_bulk_notifications(
-            self,
-            device_tokens: List[str],
-            payload: Union[Payload, Dict],
-            push_type: str = "alert",
-            priority: int = 10,
-            expiration: Optional[int] = None,
-            collapse_id: Optional[str] = None,
+        self,
+        device_tokens: List[str],
+        payload: Union[Payload, Dict],
+        push_type: str = "alert",
+        priority: int = 10,
+        expiration: Optional[int] = None,
+        collapse_id: Optional[str] = None,
     ) -> Dict[str, bool]:
         """
         Send a notification to multiple devices.
