@@ -246,7 +246,7 @@ To ensure security, make sure that:
 
 ## Requirements
 
-- Python 3.7+
+- Python 3.10+
 - httpx[http2] 0.20.0+
 - PyJWT 2.0.0+
 - cryptography 3.4.0+

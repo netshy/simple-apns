@@ -12,7 +12,7 @@ with open(os.path.join("simple_apns", "__init__.py"), encoding="utf-8") as f:
             version = line.split("=")[1].strip().strip('"\'')
             break
     else:
-        version = "0.1.0"
+        version = "0.1.1"
 
 setup(
     name="simple-apns",
@@ -25,7 +25,7 @@ setup(
     url="https://github.com/netshy/simple-apns",
     packages=find_packages(),
     include_package_data=True,
-    python_requires=">=3.7",
+    python_requires=">=3.10",
     install_requires=[
         "httpx[http2]>=0.20.0",
         "PyJWT>=2.0.0",
