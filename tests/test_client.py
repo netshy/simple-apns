@@ -242,8 +242,7 @@ def test_send_notification_max_retries_exceeded(
 
                 # Check a substring of the error message
                 error_message = str(excinfo.value)
-                assert "server error" in error_message
-                assert "500" in error_message  # Status code should be in the message
+                assert "Failed to send notification after maximum retries" in error_message
 
                 # Check call counts
                 assert (
@@ -296,7 +295,7 @@ def test_send_notification_with_custom_options(
             assert success is True
 
             # Check that headers were requested with the right parameters
-            mock_get_headers.assert_called_once_with(sample_device_token, 1600000000, 5)
+            mock_get_headers.assert_called_once_with(1600000000, 5)
 
             # Check that the headers were modified
             headers = mock_post.call_args[1]["headers"]
