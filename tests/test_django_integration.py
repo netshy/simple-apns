@@ -1,13 +1,15 @@
-import pytest
-from unittest.mock import patch, MagicMock
-
 # Configure Django settings for testing
 import os
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tests.test_settings')
+from unittest.mock import MagicMock, patch
+
+import pytest
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tests.test_settings")
 
 # Set up Django configuration early
 import django
 from django.conf import settings
+
 settings.configure(
     DEBUG=True,
     USE_TZ=True,
@@ -27,12 +29,12 @@ settings.configure(
     MIDDLEWARE_CLASSES=(),
     SECRET_KEY="secret-key-for-testing",
     SIMPLE_APNS={
-        'TEAM_ID': 'DJANGO_TEAM_ID',
-        'AUTH_KEY_ID': 'DJANGO_AUTH_KEY_ID',
-        'AUTH_KEY_PATH': '/path/to/django_key.p8',
-        'BUNDLE_ID': 'com.example.djangoapp',
-        'USE_SANDBOX': True,
-    }
+        "TEAM_ID": "DJANGO_TEAM_ID",
+        "AUTH_KEY_ID": "DJANGO_AUTH_KEY_ID",
+        "AUTH_KEY_PATH": "/path/to/django_key.p8",
+        "BUNDLE_ID": "com.example.djangoapp",
+        "USE_SANDBOX": True,
+    },
 )
 django.setup()
 
@@ -49,18 +51,18 @@ def mock_django_settings():
     """
     # Save original settings
     original_settings = {}
-    if hasattr(settings, 'SIMPLE_APNS'):
+    if hasattr(settings, "SIMPLE_APNS"):
         original_settings = settings.SIMPLE_APNS.copy()
 
     # Update settings for test
     settings.SIMPLE_APNS = {
-        'TEAM_ID': 'DJANGO_TEAM_ID',
-        'AUTH_KEY_ID': 'DJANGO_AUTH_KEY_ID',
-        'AUTH_KEY_PATH': '/path/to/django_key.p8',
-        'BUNDLE_ID': 'com.example.djangoapp',
-        'USE_SANDBOX': True,
-        'TIMEOUT': 15,
-        'MAX_RETRIES': 2
+        "TEAM_ID": "DJANGO_TEAM_ID",
+        "AUTH_KEY_ID": "DJANGO_AUTH_KEY_ID",
+        "AUTH_KEY_PATH": "/path/to/django_key.p8",
+        "BUNDLE_ID": "com.example.djangoapp",
+        "USE_SANDBOX": True,
+        "TIMEOUT": 15,
+        "MAX_RETRIES": 2,
     }
 
     yield settings
@@ -72,7 +74,7 @@ def mock_django_settings():
 
 def test_get_apns_client(mock_django_settings):
     """Test getting the APNSClient from Django settings."""
-    with patch('simple_apns.django.integration.APNSClient') as mock_client_class:
+    with patch("simple_apns.django.integration.APNSClient") as mock_client_class:
         # Import the function
         from simple_apns.django.integration import get_apns_client
 
@@ -84,18 +86,18 @@ def test_get_apns_client(mock_django_settings):
 
         # Check that the client was created with the right settings
         mock_client_class.assert_called_once_with(
-            team_id='DJANGO_TEAM_ID',
-            auth_key_id='DJANGO_AUTH_KEY_ID',
-            auth_key_path='/path/to/django_key.p8',
-            bundle_id='com.example.djangoapp',
+            team_id="DJANGO_TEAM_ID",
+            auth_key_id="DJANGO_AUTH_KEY_ID",
+            auth_key_path="/path/to/django_key.p8",
+            bundle_id="com.example.djangoapp",
             use_sandbox=True,
             apns_topic=None,  # Should default to None
             timeout=15,
-            max_retries=2
+            max_retries=2,
         )
 
         # Calling get_apns_client again should return the cached client
-        with patch('simple_apns.django.integration.APNSClient') as second_mock:
+        with patch("simple_apns.django.integration.APNSClient") as second_mock:
             second_client = get_apns_client()
             second_mock.assert_not_called()  # Should use cached client
 
@@ -103,17 +105,18 @@ def test_get_apns_client(mock_django_settings):
 def test_get_apns_client_missing_settings():
     """Test error handling when settings are missing."""
     # Import first
-    from simple_apns.django.integration import get_apns_client
     from django.core.exceptions import ImproperlyConfigured
+
+    from simple_apns.django.integration import get_apns_client
 
     # Clear the cache to ensure a new client is created
     get_apns_client.cache_clear()
 
     # Temporarily modify settings to remove SIMPLE_APNS
     original_simple_apns = None
-    if hasattr(settings, 'SIMPLE_APNS'):
+    if hasattr(settings, "SIMPLE_APNS"):
         original_simple_apns = settings.SIMPLE_APNS
-        delattr(settings, 'SIMPLE_APNS')
+        delattr(settings, "SIMPLE_APNS")
 
     try:
         # Attempt to get the client
@@ -130,24 +133,25 @@ def test_get_apns_client_missing_settings():
 def test_get_apns_client_incomplete_settings():
     """Test error handling when settings are incomplete."""
     # Import first
-    from simple_apns.django.integration import get_apns_client
     from django.core.exceptions import ImproperlyConfigured
+
+    from simple_apns.django.integration import get_apns_client
 
     # Clear the cache to ensure a new client is created
     get_apns_client.cache_clear()
 
     # Save original settings
     original_simple_apns = None
-    if hasattr(settings, 'SIMPLE_APNS'):
+    if hasattr(settings, "SIMPLE_APNS"):
         original_simple_apns = settings.SIMPLE_APNS.copy()
 
     try:
         # Set incomplete settings
         settings.SIMPLE_APNS = {
-            'TEAM_ID': 'DJANGO_TEAM_ID',
+            "TEAM_ID": "DJANGO_TEAM_ID",
             # Missing AUTH_KEY_ID
-            'AUTH_KEY_PATH': '/path/to/django_key.p8',
-            'BUNDLE_ID': 'com.example.djangoapp'
+            "AUTH_KEY_PATH": "/path/to/django_key.p8",
+            "BUNDLE_ID": "com.example.djangoapp",
         }
 
         # Attempt to get the client
@@ -175,7 +179,7 @@ def test_create_payload():
         thread_id="django-thread-1",
         extra_data={"django_key": "django_value"},
         content_available=True,
-        mutable_content=True
+        mutable_content=True,
     )
 
     # Convert to dict for easier assertion
@@ -202,7 +206,9 @@ def test_send_notification(mock_django_settings):
     mock_client = MagicMock()
     mock_client.send_notification.return_value = True
 
-    with patch('simple_apns.django.integration.get_apns_client', return_value=mock_client):
+    with patch(
+            "simple_apns.django.integration.get_apns_client", return_value=mock_client
+    ):
         # Send a notification
         result = send_notification(
             device_token="django-device-token",
@@ -215,7 +221,7 @@ def test_send_notification(mock_django_settings):
             extra_data={"key1": "value1", "key2": "value2"},
             content_available=True,
             push_type="background",
-            priority=5
+            priority=5,
         )
 
         # Check the result
@@ -250,12 +256,11 @@ def test_send_bulk_notifications(mock_django_settings):
 
     # Mock the APNSClient and its send_bulk_notifications method
     mock_client = MagicMock()
-    mock_client.send_bulk_notifications.return_value = {
-        "token1": True,
-        "token2": False
-    }
+    mock_client.send_bulk_notifications.return_value = {"token1": True, "token2": False}
 
-    with patch('simple_apns.django.integration.get_apns_client', return_value=mock_client):
+    with patch(
+            "simple_apns.django.integration.get_apns_client", return_value=mock_client
+    ):
         # Send bulk notifications
         device_tokens = ["token1", "token2"]
         result = send_bulk_notifications(
@@ -263,7 +268,7 @@ def test_send_bulk_notifications(mock_django_settings):
             title="Bulk Title",
             body="Bulk Body",
             extra_data={"bulk_key": "bulk_value"},
-            priority=5
+            priority=5,
         )
 
         # Check the result
@@ -289,7 +294,7 @@ def test_reset_apns_client(mock_django_settings):
     # Import first
     from simple_apns.django.integration import get_apns_client, reset_apns_client
 
-    with patch('simple_apns.django.integration.APNSClient') as mock_client_class:
+    with patch("simple_apns.django.integration.APNSClient") as mock_client_class:
         # Get a client (creates a new one)
         get_apns_client.cache_clear()
         client1 = get_apns_client()

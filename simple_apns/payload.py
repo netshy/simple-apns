@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Union, Any
+from typing import Any, Dict, List, Optional, Union
 
 
 class Payload:
@@ -9,7 +9,9 @@ class Payload:
     in a more intuitive way than manually constructing dictionaries.
     """
 
-    def __init__(self, alert_title: Optional[str] = None, alert_body: Optional[str] = None):
+    def __init__(
+            self, alert_title: Optional[str] = None, alert_body: Optional[str] = None
+    ):
         """
         Initialize a new payload.
 
@@ -39,7 +41,7 @@ class Payload:
             loc_args: Optional[List[str]] = None,
             summary_arg: Optional[str] = None,
             summary_arg_count: Optional[int] = None,
-    ) -> 'Payload':
+    ) -> "Payload":
         """
         Set the alert properties of the notification.
 
@@ -97,7 +99,7 @@ class Payload:
 
         return self
 
-    def set_badge(self, badge: int) -> 'Payload':
+    def set_badge(self, badge: int) -> "Payload":
         """
         Set the badge count to be displayed on the app icon.
 
@@ -110,7 +112,7 @@ class Payload:
         self.aps_dict["badge"] = badge
         return self
 
-    def set_sound(self, sound: Union[str, Dict[str, Any]]) -> 'Payload':
+    def set_sound(self, sound: Union[str, Dict[str, Any]]) -> "Payload":
         """
         Set the sound to play for the notification.
 
@@ -124,7 +126,7 @@ class Payload:
         self.aps_dict["sound"] = sound
         return self
 
-    def set_content_available(self, content_available: bool = True) -> 'Payload':
+    def set_content_available(self, content_available: bool = True) -> "Payload":
         """
         Set the content-available flag for background notifications.
 
@@ -141,7 +143,7 @@ class Payload:
 
         return self
 
-    def set_mutable_content(self, mutable_content: bool = True) -> 'Payload':
+    def set_mutable_content(self, mutable_content: bool = True) -> "Payload":
         """
         Set the mutable-content flag for notification service extensions.
 
@@ -158,7 +160,7 @@ class Payload:
 
         return self
 
-    def set_category(self, category: str) -> 'Payload':
+    def set_category(self, category: str) -> "Payload":
         """
         Set the category for custom actions.
 
@@ -171,7 +173,7 @@ class Payload:
         self.aps_dict["category"] = category
         return self
 
-    def set_thread_id(self, thread_id: str) -> 'Payload':
+    def set_thread_id(self, thread_id: str) -> "Payload":
         """
         Set the thread identifier for grouping notifications.
 
@@ -184,7 +186,7 @@ class Payload:
         self.aps_dict["thread-id"] = thread_id
         return self
 
-    def set_target_content_id(self, target_content_id: str) -> 'Payload':
+    def set_target_content_id(self, target_content_id: str) -> "Payload":
         """
         Set the target content identifier.
 
@@ -197,7 +199,7 @@ class Payload:
         self.aps_dict["target-content-id"] = target_content_id
         return self
 
-    def set_interruption_level(self, level: str) -> 'Payload':
+    def set_interruption_level(self, level: str) -> "Payload":
         """
         Set the interruption level.
 
@@ -209,12 +211,14 @@ class Payload:
         """
         valid_levels = ("passive", "active", "time-sensitive", "critical")
         if level not in valid_levels:
-            raise ValueError(f"Invalid interruption level. Must be one of: {', '.join(valid_levels)}")
+            raise ValueError(
+                f"Invalid interruption level. Must be one of: {', '.join(valid_levels)}"
+            )
 
         self.aps_dict["interruption-level"] = level
         return self
 
-    def set_relevance_score(self, score: float) -> 'Payload':
+    def set_relevance_score(self, score: float) -> "Payload":
         """
         Set the relevance score (0.0 to 1.0).
 
@@ -230,7 +234,7 @@ class Payload:
         self.aps_dict["relevance-score"] = score
         return self
 
-    def add_custom_data(self, key: str, value: Any) -> 'Payload':
+    def add_custom_data(self, key: str, value: Any) -> "Payload":
         """
         Add custom data to the payload (outside the 'aps' dictionary).
 

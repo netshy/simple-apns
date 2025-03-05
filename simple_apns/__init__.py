@@ -2,17 +2,17 @@
 simple-apns - Synchronous Python client for Apple Push Notification Service
 """
 
-from .client import APNSClient
-from .payload import Payload
 from .auth import create_token
+from .client import APNSClient
 from .exceptions import (
-    APNSException,
     APNSAuthError,
-    APNSTokenError,
-    APNSServerError,
+    APNSException,
     APNSPayloadError,
-    APNSTimeoutError
+    APNSServerError,
+    APNSTimeoutError,
+    APNSTokenError,
 )
+from .payload import Payload
 
 __version__ = "0.1.0"
 __all__ = [

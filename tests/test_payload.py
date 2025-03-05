@@ -1,6 +1,6 @@
 import pytest
+
 from simple_apns.payload import Payload
-from simple_apns.exceptions import APNSPayloadError
 
 
 def test_payload_init_empty():
@@ -22,14 +22,7 @@ def test_payload_init_with_alert():
     assert payload.aps_dict["alert"]["body"] == "Test Body"
 
     result = payload.to_dict()
-    assert result == {
-        "aps": {
-            "alert": {
-                "title": "Test Title",
-                "body": "Test Body"
-            }
-        }
-    }
+    assert result == {"aps": {"alert": {"title": "Test Title", "body": "Test Body"}}}
 
 
 def test_set_alert():
@@ -37,11 +30,7 @@ def test_set_alert():
     payload = Payload()
 
     # Test setting basic alert properties
-    payload.set_alert(
-        title="Alert Title",
-        body="Alert Body",
-        subtitle="Alert Subtitle"
-    )
+    payload.set_alert(title="Alert Title", body="Alert Body", subtitle="Alert Subtitle")
 
     assert payload.aps_dict["alert"]["title"] == "Alert Title"
     assert payload.aps_dict["alert"]["body"] == "Alert Body"
@@ -49,9 +38,7 @@ def test_set_alert():
 
     # Test method chaining
     result = payload.set_alert(
-        title="New Title",
-        loc_key="ALERT_LOC_KEY",
-        loc_args=["arg1", "arg2"]
+        title="New Title", loc_key="ALERT_LOC_KEY", loc_args=["arg1", "arg2"]
     )
 
     assert result is payload  # Method returns self
@@ -82,11 +69,7 @@ def test_set_sound():
     assert payload.aps_dict["sound"] == "default"
 
     # Test with dictionary for critical alerts
-    critical_sound = {
-        "critical": 1,
-        "name": "critical_sound",
-        "volume": 0.8
-    }
+    critical_sound = {"critical": 1, "name": "critical_sound", "volume": 0.8}
 
     result = payload.set_sound(critical_sound)
     assert result is payload  # Method returns self
@@ -219,7 +202,7 @@ def test_complex_payload():
     payload.set_alert(
         title="Complex Notification",
         body="This is a complex notification",
-        subtitle="With a subtitle"
+        subtitle="With a subtitle",
     )
     payload.set_badge(7)
     payload.set_sound("custom_sound")

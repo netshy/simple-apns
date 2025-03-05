@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Dict, List, Optional, Union, Any
+from typing import Any, Dict, List, Optional, Union
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -35,13 +35,15 @@ def get_apns_client() -> APNSClient:
         ImproperlyConfigured: If required settings are missing
     """
     # Check if the settings are configured
-    if not hasattr(settings, 'SIMPLE_APNS'):
-        raise ImproperlyConfigured("SIMPLE_APNS settings are missing in your Django settings")
+    if not hasattr(settings, "SIMPLE_APNS"):
+        raise ImproperlyConfigured(
+            "SIMPLE_APNS settings are missing in your Django settings"
+        )
 
     apns_settings = settings.SIMPLE_APNS
 
     # Check required settings
-    required_settings = ['TEAM_ID', 'AUTH_KEY_ID', 'AUTH_KEY_PATH', 'BUNDLE_ID']
+    required_settings = ["TEAM_ID", "AUTH_KEY_ID", "AUTH_KEY_PATH", "BUNDLE_ID"]
     missing_settings = [s for s in required_settings if s not in apns_settings]
 
     if missing_settings:
@@ -51,14 +53,14 @@ def get_apns_client() -> APNSClient:
 
     # Create the client with settings
     client = APNSClient(
-        team_id=apns_settings['TEAM_ID'],
-        auth_key_id=apns_settings['AUTH_KEY_ID'],
-        auth_key_path=apns_settings['AUTH_KEY_PATH'],
-        bundle_id=apns_settings['BUNDLE_ID'],
-        use_sandbox=apns_settings.get('USE_SANDBOX', False),
-        apns_topic=apns_settings.get('APNS_TOPIC'),
-        timeout=apns_settings.get('TIMEOUT', 10),
-        max_retries=apns_settings.get('MAX_RETRIES', 3),
+        team_id=apns_settings["TEAM_ID"],
+        auth_key_id=apns_settings["AUTH_KEY_ID"],
+        auth_key_path=apns_settings["AUTH_KEY_PATH"],
+        bundle_id=apns_settings["BUNDLE_ID"],
+        use_sandbox=apns_settings.get("USE_SANDBOX", False),
+        apns_topic=apns_settings.get("APNS_TOPIC"),
+        timeout=apns_settings.get("TIMEOUT", 10),
+        max_retries=apns_settings.get("MAX_RETRIES", 3),
     )
 
     return client
@@ -171,7 +173,7 @@ def send_notification(
         thread_id=thread_id,
         extra_data=extra_data,
         content_available=content_available,
-        mutable_content=mutable_content
+        mutable_content=mutable_content,
     )
 
     # Get the client and send the notification
@@ -231,7 +233,7 @@ def send_bulk_notifications(
         thread_id=thread_id,
         extra_data=extra_data,
         content_available=content_available,
-        mutable_content=mutable_content
+        mutable_content=mutable_content,
     )
 
     # Get the client and send the notifications

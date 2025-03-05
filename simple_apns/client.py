@@ -28,7 +28,7 @@ class APNSClient:
             use_sandbox: bool = False,
             apns_topic: Optional[str] = None,
             timeout: int = 10,
-            max_retries: int = 3
+            max_retries: int = 3,
     ):
         """
         Initialize the APNS client.
@@ -52,7 +52,9 @@ class APNSClient:
         self.max_retries = max_retries
 
         # Set the appropriate endpoint
-        self.endpoint = self.ENDPOINT_DEVELOPMENT if use_sandbox else self.ENDPOINT_PRODUCTION
+        self.endpoint = (
+            self.ENDPOINT_DEVELOPMENT if use_sandbox else self.ENDPOINT_PRODUCTION
+        )
 
         # Store token and expiration time
         self._token = None
@@ -73,13 +75,15 @@ class APNSClient:
             self._token = create_token(
                 team_id=self.team_id,
                 auth_key_id=self.auth_key_id,
-                auth_key_path=self.auth_key_path
+                auth_key_path=self.auth_key_path,
             )
             self._token_expires_at = current_time + 3600  # 1 hour
 
         return self._token
 
-    def _get_headers(self, device_token: str, expiration: Optional[int] = None, priority: int = 10) -> Dict:
+    def _get_headers(
+            self, device_token: str, expiration: Optional[int] = None, priority: int = 10
+    ) -> Dict:
         """
         Create request headers for APNS.
 
@@ -154,10 +158,7 @@ class APNSClient:
         while retries <= self.max_retries:
             try:
                 response = self.client.post(
-                    url,
-                    json=payload_dict,
-                    headers=headers,
-                    timeout=self.timeout
+                    url, json=payload_dict, headers=headers, timeout=self.timeout
                 )
 
                 # If the request was successful, return True
@@ -174,21 +175,20 @@ class APNSClient:
                         raise APNSTokenError(f"Invalid device token: {device_token}")
                     raise APNSException(f"Bad request: {reason}")
 
-                elif response.status_code == 403:
+                if response.status_code == 403:
                     # Forbidden
                     raise APNSException("Certificate or token is not valid")
 
-                elif response.status_code == 410:
+                if response.status_code == 410:
                     # Token is no longer valid
                     raise APNSTokenError(f"Token is no longer valid: {device_token}")
 
-                else:
-                    # Server error, may be worth retrying
-                    retries += 1
-                    if retries <= self.max_retries:
-                        # Add a delay before retrying
-                        time.sleep(0.5 * retries)
-                        continue
+                # Server error, may be worth retrying
+                retries += 1
+                if retries <= self.max_retries:
+                    # Add a delay before retrying
+                    time.sleep(0.5 * retries)
+                    continue
 
                     raise APNSServerError(
                         f"APNS server error: {response.status_code}, {error_response.get('reason', 'Unknown')}"
@@ -242,8 +242,7 @@ class APNSClient:
                     collapse_id=collapse_id,
                 )
                 results[token] = success
-            except APNSException as e:
-                # Log the error but continue with other tokens
+            except APNSException:
                 results[token] = False
 
         return results

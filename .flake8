@@ -1,0 +1,5 @@
+[flake8]
+max-line-length = 119
+ignore = R504, F841, E402
+count = True
+statistics = True

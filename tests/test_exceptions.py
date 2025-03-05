@@ -1,11 +1,12 @@
 import pytest
+
 from simple_apns.exceptions import (
-    APNSException,
     APNSAuthError,
-    APNSTokenError,
-    APNSServerError,
+    APNSException,
     APNSPayloadError,
-    APNSTimeoutError
+    APNSServerError,
+    APNSTimeoutError,
+    APNSTokenError,
 )
 
 
@@ -50,7 +51,9 @@ def test_exception_hierarchy():
 def test_exception_with_details():
     """Test exceptions with additional details."""
     # Test with additional details
-    exc = APNSServerError("APNS server returned status 500 with reason: InternalServerError")
+    exc = APNSServerError(
+        "APNS server returned status 500 with reason: InternalServerError"
+    )
     assert "status 500" in str(exc)
     assert "InternalServerError" in str(exc)
 

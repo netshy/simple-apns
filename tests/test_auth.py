@@ -1,11 +1,10 @@
-import os
-import pytest
-import jwt
 from pathlib import Path
-from unittest.mock import patch, mock_open
+from unittest.mock import mock_open, patch
+
+import jwt
+import pytest
 
 from simple_apns.auth import create_token
-from simple_apns.exceptions import APNSAuthError
 
 
 def test_create_token_with_file_path(mock_private_key):
@@ -22,7 +21,7 @@ def test_create_token_with_file_path(mock_private_key):
                 team_id="TEAM000000",
                 auth_key_id="AUTH0000000",
                 auth_key_path=mock_file_path,
-                expiration_time=3600
+                expiration_time=3600,
             )
 
             # Assert the token is a string
@@ -53,7 +52,7 @@ def test_create_token_with_key_content(mock_private_key):
         auth_key_id="AUTH0000000",
         auth_key_path=None,
         auth_key_content=mock_private_key,
-        expiration_time=3600
+        expiration_time=3600,
     )
 
     # Assert the token is a string
@@ -77,7 +76,7 @@ def test_create_token_file_not_found():
                 team_id="TEAM000000",
                 auth_key_id="AUTH0000000",
                 auth_key_path="/nonexistent/path.p8",
-                expiration_time=3600
+                expiration_time=3600,
             )
 
 
@@ -89,10 +88,12 @@ def test_create_token_missing_parameters():
             auth_key_id="AUTH0000000",
             auth_key_path=None,
             auth_key_content=None,
-            expiration_time=3600
+            expiration_time=3600,
         )
 
-    assert "Either auth_key_path or auth_key_content must be provided" in str(excinfo.value)
+    assert "Either auth_key_path or auth_key_content must be provided" in str(
+        excinfo.value
+    )
 
 
 def test_create_token_with_custom_expiration(mock_private_key):
@@ -106,14 +107,14 @@ def test_create_token_with_custom_expiration(mock_private_key):
                 team_id="TEAM000000",
                 auth_key_id="AUTH0000000",
                 auth_key_path="/path/to/key.p8",
-                expiration_time=1800  # 30 minutes
+                expiration_time=1800,  # 30 minutes
             )
 
             token2 = create_token(
                 team_id="TEAM000000",
                 auth_key_id="AUTH0000000",
                 auth_key_path="/path/to/key.p8",
-                expiration_time=7200  # 2 hours
+                expiration_time=7200,  # 2 hours
             )
 
             # Decode the tokens

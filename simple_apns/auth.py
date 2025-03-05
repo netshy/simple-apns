@@ -41,7 +41,9 @@ def create_token(
     else:
         key_path = Path(auth_key_path)
         if not key_path.exists():
-            raise FileNotFoundError(f"Authentication key file not found: {auth_key_path}")
+            raise FileNotFoundError(
+                f"Authentication key file not found: {auth_key_path}"
+            )
 
         with open(key_path, "r") as key_file:
             private_key = key_file.read()

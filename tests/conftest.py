@@ -1,8 +1,6 @@
-import pytest
-from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-import httpx
+import pytest
 
 from simple_apns import APNSClient, Payload
 
@@ -41,7 +39,7 @@ def apns_test_params():
         "auth_key_id": "AUTH0000000",
         "auth_key_path": "/path/to/key.p8",
         "bundle_id": "com.example.app",
-        "use_sandbox": True
+        "use_sandbox": True,
     }
 
 
@@ -53,14 +51,14 @@ def mock_client(mock_private_key, apns_test_params, tmp_path):
     tmp_dir.mkdir(exist_ok=True)
     key_path = tmp_dir / "AuthKey_test.p8"
 
-    with open(key_path, 'w') as f:
+    with open(key_path, "w") as f:
         f.write(mock_private_key)
 
     # Override the auth_key_path in test params
     test_params = apns_test_params.copy()
     test_params["auth_key_path"] = str(key_path)
 
-    with patch('httpx.Client'):
+    with patch("httpx.Client"):
         client = APNSClient(**test_params)
         yield client
 
@@ -69,8 +67,7 @@ def mock_client(mock_private_key, apns_test_params, tmp_path):
 def sample_payload():
     """Create a sample notification payload"""
     payload = Payload(
-        alert_title="Test Notification",
-        alert_body="This is a test notification"
+        alert_title="Test Notification", alert_body="This is a test notification"
     )
     payload.set_badge(1)
     payload.set_sound("default")
