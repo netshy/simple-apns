@@ -1,5 +1,11 @@
 # Simple APNS
 
+[![Tests](https://github.com/netshy/simple-apns/actions/workflows/tests.yml/badge.svg)](https://github.com/netshy/simple-apns/actions/workflows/tests.yml)
+[![PyPI version](https://badge.fury.io/py/simple-apns.svg)](https://badge.fury.io/py/simple-apns)
+[![Python Versions](https://img.shields.io/pypi/pyversions/simple-apns.svg)](https://pypi.org/project/simple-apns/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+
 A synchronous Python client for Apple Push Notification Service (APNS) that integrates easily with Django. The library uses `httpx` for HTTP/2 requests.
 
 ## Features
