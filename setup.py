@@ -13,7 +13,7 @@ with open(os.path.join("simple_apns", "__init__.py"), encoding="utf-8") as f:
             version = line.split("=")[1].strip().strip('"\'')
             break
     else:
-        version = "0.1.1"
+        version = "0.1.2"
 
 setup(
     name="simple-apns",
