@@ -1,5 +1,5 @@
 [flake8]
-max-line-length = 119
+max-line-length = 120
 ignore = R504, F841, E402, W503
 count = True
 statistics = True
