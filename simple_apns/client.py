@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Union
 import httpx
 
 from .auth import create_token
-from .exceptions import APNSException, APNSServerError, APNSTokenError
+from .exceptions import APNSException, APNSServerError, APNSTokenError, APNSTimeoutError
 from .payload import Payload
 
 
@@ -51,17 +51,31 @@ class APNSClient:
         self.timeout = timeout
         self.max_retries = max_retries
 
-        # Set the appropriate endpoint
         self.endpoint = (
             self.ENDPOINT_DEVELOPMENT if use_sandbox else self.ENDPOINT_PRODUCTION
         )
 
-        # Store token and expiration time
         self._token = None
         self._token_expires_at = 0
 
-        # Initialize the HTTP client
-        self.client = httpx.Client(http2=True)
+        timeout_config = httpx.Timeout(
+            connect=5.0,
+            read=timeout,
+            write=5.0,
+            pool=2.0,
+        )
+
+        limits = httpx.Limits(
+            max_keepalive_connections=10,
+            max_connections=20,
+            keepalive_expiry=30.0,
+        )
+
+        self.client = httpx.Client(
+            http2=True,
+            timeout=timeout_config,
+            limits=limits,
+        )
 
     def _get_auth_token(self) -> str:
         """
@@ -69,15 +83,13 @@ class APNSClient:
         """
         current_time = time.time()
 
-        # If the token is not set or has expired (or is about to expire in the next 5 minutes)
         if not self._token or current_time > (self._token_expires_at - 300):
-            # Generate a new token valid for 1 hour
             self._token = create_token(
                 team_id=self.team_id,
                 auth_key_id=self.auth_key_id,
                 auth_key_path=self.auth_key_path,
             )
-            self._token_expires_at = current_time + 3600  # 1 hour
+            self._token_expires_at = current_time + 3600
 
         return self._token
 
@@ -141,60 +153,52 @@ class APNSClient:
         else:
             payload_dict = payload
 
-        # Prepare the request URL
         url = f"{self.endpoint}/3/device/{device_token}"
 
-        # Prepare headers
         headers = self._get_headers(expiration, priority)
         headers["apns-push-type"] = push_type
 
         if collapse_id:
             headers["apns-collapse-id"] = collapse_id
 
-        # Set up retry counter
         retries = 0
 
         while retries <= self.max_retries:
             try:
-                response = self.client.post(
-                    url, json=payload_dict, headers=headers, timeout=self.timeout
-                )
+                response = self.client.post(url, json=payload_dict, headers=headers)
 
-                # If the request was successful, return True
                 if response.status_code == 200:
                     return True
 
-                # Parse error response
                 error_response = response.json()
 
                 if response.status_code == 400:
-                    # Bad request
                     reason = error_response.get("reason", "BadRequest")
                     if reason == "BadDeviceToken":
                         raise APNSTokenError(f"Invalid device token: {device_token}")
                     raise APNSException(f"Bad request: {reason}")
 
                 if response.status_code == 403:
-                    # Forbidden
                     raise APNSException("Certificate or token is not valid")
 
                 if response.status_code == 410:
-                    # Token is no longer valid
                     raise APNSTokenError(f"Token is no longer valid: {device_token}")
 
-                # Server error, may be worth retrying
                 retries += 1
                 if retries <= self.max_retries:
-                    # Add a delay before retrying
                     time.sleep(0.5 * retries)
                     continue
 
-                    raise APNSServerError(
-                        f"APNS server error: {response.status_code}, {error_response.get('reason', 'Unknown')}"
-                    )
+                raise APNSServerError(
+                    f"APNS server error: {response.status_code}, {error_response.get('reason', 'Unknown')}"
+                )
 
-            except (httpx.RequestError, httpx.TimeoutException) as e:
-                # Network-related errors, retry
+            except httpx.TimeoutException as e:
+                raise APNSTimeoutError(
+                    f"Request timed out after {self.timeout}s for token {device_token[:8]}..."
+                ) from e
+
+            except httpx.RequestError as e:
                 retries += 1
                 if retries <= self.max_retries:
                     time.sleep(0.5 * retries)
@@ -202,7 +206,6 @@ class APNSClient:
 
                 raise APNSException(f"Network error: {str(e)}")
 
-        # If we get here, we've exhausted all retries
         raise APNSServerError("Failed to send notification after maximum retries")
 
     def send_bulk_notifications(
