@@ -14,7 +14,7 @@ from .exceptions import (
 )
 from .payload import Payload
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 __all__ = [
     "APNSClient",
     "Payload",
